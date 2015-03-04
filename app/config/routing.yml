@@ -1,3 +1,2 @@
-app:
-    resource: @AppBundle/Controller/
-    type:     annotation
+scrum_board:
+    resource: @ScrumBoardBundle/Resources/config/routing.yml

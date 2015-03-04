@@ -1,0 +1,5 @@
+scrum_board_task:
+    path: /task/
+    defaults:
+        _controller: ScrumBoardBundle:Task:index
+
