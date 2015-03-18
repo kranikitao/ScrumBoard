@@ -7,8 +7,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
-    public function indexAction()
+    /**
+     * @return Response
+     */
+    public function getAction()
     {
         return new Response();
+    }
+
+    /**
+     * @return Response
+     */
+    public function createAction()
+    {
+        return new Response('', 201);
     }
 }

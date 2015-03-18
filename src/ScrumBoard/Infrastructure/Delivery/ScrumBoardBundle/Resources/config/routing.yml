@@ -1,5 +1,12 @@
-scrum_board_task:
+scrum_board_task_get:
     path: /task/
     defaults:
-        _controller: ScrumBoardBundle:Task:index
+        _controller: ScrumBoardBundle:Task:get
+    condition: "context.getMethod() == 'GET'"
+
+scrum_board_task_create:
+    path: /task/
+    defaults:
+        _controller: ScrumBoardBundle:Task:create
+    condition: "context.getMethod() == 'POST'"
 

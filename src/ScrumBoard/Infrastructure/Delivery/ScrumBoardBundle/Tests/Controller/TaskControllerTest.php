@@ -9,30 +9,25 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function sendRequestToTask_ShouldReturn200OkAndNoTasks()
+    public function get_requestToTask_ShouldReturn200OkAndNoTasks()
     {
         $client = static::createClient(['environment' => 'test']);
 
         $crawler = $client->request('GET', '/task/');
 
-        $this->assertEquals($client->getResponse()->getStatusCode(), 200);
-        $this->assertTrue($crawler->filter('html>body>ul>li')->count() === 0);
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(0, $crawler->filter('html>body>ul>li')->count());
     }
 
     /**
      * @test
      */
-    public function sendRequestToTask_ShouldReturnActiveTasks()
+    public function post_createNewTask_ShouldReturn201Created()
     {
 
         $client = static::createClient(['environment' => 'test']);
+        $client->request('POST', '/task/');
 
-        //todo: загрузить фикстуры
-        $kernel = $client->getKernel();
-
-        $crawler = $client->request('GET', '/task/');
-
-        $this->assertEquals($client->getResponse()->getStatusCode(), 200);
-        $this->assertEquals(1, $crawler->filter('html>body>ul>li>a')->count());
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
     }
 }
