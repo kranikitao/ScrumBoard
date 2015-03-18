@@ -2,7 +2,9 @@
 
 namespace ScrumBoard\Infrastructure\Delivery\ScrumBoardBundle\Controller;
 
+use ScrumBoard\Domain\Model\Task;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
@@ -10,16 +12,40 @@ class TaskController extends Controller
     /**
      * @return Response
      */
-    public function getAction()
+    public function indexAction()
     {
         return new Response();
     }
 
     /**
+     * @param int $id
      * @return Response
      */
-    public function createAction()
+    public function getAction($id)
     {
-        return new Response('', 201);
+        $task = $this->get('task_repository')->findById($id);
+
+        return new Response($this->renderView('ScrumBoardBundle:Task:get.html.twig', ['task' => $task]), 201);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function createAction(Request $request)
+    {
+        $task = new Task(
+            $request->request->get('subject'),
+            $request->request->get('description')
+        );
+
+        $taskRepository = $this->get('task_repository');
+
+        $taskRepository->add($task);
+        $taskRepository->commit();
+
+        $location = sprintf('/task/%u', $task->getId());
+
+        return new Response('', 201, ['Location' => $location]);
     }
 }

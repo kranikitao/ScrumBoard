@@ -16,7 +16,7 @@ class TaskControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/task/');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->filter('html>body>ul>li')->count());
+        $this->assertEquals(0, $crawler->filter('ul>li')->count());
     }
 
     /**
@@ -24,10 +24,32 @@ class TaskControllerTest extends WebTestCase
      */
     public function post_createNewTask_ShouldReturn201Created()
     {
-
         $client = static::createClient(['environment' => 'test']);
-        $client->request('POST', '/task/');
+        $subject = 'Task subject';
+        $description = 'Task description';
+        $client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
 
         $this->assertEquals(201, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function post_createNewTask_createsTaskAndReturnsItsLocation()
+    {
+        $client = static::createClient(['environment' => 'test']);
+        $subject = 'Task subject';
+        $description = 'Task description';
+        $client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
+
+
+        $crawler = $client->request('GET', $client->getResponse()->headers->get('Location'));
+
+        $itemNode = $crawler->filter('div');
+        $this->assertEquals(1, $itemNode->count());
+        $this->assertEquals($subject, $itemNode->attr('data-subject'));
+        $this->assertEquals($description, $itemNode->attr('data-description'));
+        $this->assertNotEmpty($itemNode->attr('data-id'));
+
     }
 }

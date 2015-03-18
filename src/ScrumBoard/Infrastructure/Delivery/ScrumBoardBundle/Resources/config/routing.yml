@@ -1,7 +1,15 @@
 scrum_board_task_get:
-    path: /task/
+    path: /task/{id}
     defaults:
         _controller: ScrumBoardBundle:Task:get
+    requirements:
+        id: \d+
+    condition: "context.getMethod() == 'GET'"
+
+scrum_board_task_index:
+    path: /task/
+    defaults:
+        _controller: ScrumBoardBundle:Task:index
     condition: "context.getMethod() == 'GET'"
 
 scrum_board_task_create:
