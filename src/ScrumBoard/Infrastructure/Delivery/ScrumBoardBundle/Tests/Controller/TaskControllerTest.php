@@ -2,10 +2,21 @@
 
 namespace ScrumBoard\Infrastructure\Delivery\ScrumBoardBundle\Tests\Controller;
 
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TaskControllerTest extends WebTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        $client = static::createClient(['environment' => 'test']);
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+        $schema = new SchemaTool($entityManager);
+
+        $schema->dropDatabase();
+        $schema->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
+    }
+
     /**
      * @test
      */
@@ -41,7 +52,6 @@ class TaskControllerTest extends WebTestCase
         $subject = 'Task subject';
         $description = 'Task description';
         $client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
-
 
         $crawler = $client->request('GET', $client->getResponse()->headers->get('Location'));
 
