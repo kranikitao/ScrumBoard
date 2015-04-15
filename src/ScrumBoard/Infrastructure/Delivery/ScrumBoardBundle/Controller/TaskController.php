@@ -14,7 +14,9 @@ class TaskController extends Controller
      */
     public function indexAction()
     {
-        return new Response();
+        $tasks = $this->getTaskRepository()->findAll();
+
+        return new Response($this->renderView('ScrumBoardBundle:Task:index.html.twig', compact('tasks')), 200);
     }
 
     /**
@@ -23,7 +25,7 @@ class TaskController extends Controller
      */
     public function getAction($id)
     {
-        $task = $this->get('task_repository')->findById($id);
+        $task = $this->getTaskRepository()->findById($id);
 
         return new Response($this->renderView('ScrumBoardBundle:Task:get.html.twig', ['task' => $task]), 201);
     }
@@ -47,5 +49,13 @@ class TaskController extends Controller
         $location = sprintf('/task/%u', $task->getId());
 
         return new Response('', 201, ['Location' => $location]);
+    }
+
+    /**
+     * @return \ScrumBoard\Domain\TaskRepository
+     */
+    private function getTaskRepository()
+    {
+        return $this->get('task_repository');
     }
 }

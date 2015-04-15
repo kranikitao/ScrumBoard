@@ -18,4 +18,9 @@ interface TaskRepository
      * @return Task|null
      */
     public function findById($id);
+
+    /**
+     * @return Task[]
+     */
+    public function findAll();
 }
