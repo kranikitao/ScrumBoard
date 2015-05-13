@@ -1,0 +1,70 @@
+<!--GET /-->
+<ul>
+    <li>
+        <a href="/task/">task</a>
+    </li>
+    <li>
+        <a href="/stage/">stage</a>
+    </li>
+</ul>
+
+<!--GET /stage/-->
+<form method="post" action="/stage/">
+    <input name="name"/>
+    <button type="submit">create</button>
+</form>
+<ol>
+    <li>
+        <a href="/stage/1">1</a>
+    </li>
+    <li>
+        <a href="/stage/2">2</a>
+    </li>
+</ol>
+
+<!--GET /task/-->
+<form method="post" action="/task/">
+    <input name="subject"/>
+    <input name="description"/>
+    <button type="submit">create</button>
+</form>
+
+<!--GET /task/1-->
+<form method="put" action="/task/1">
+    <input name="subject" value="subject"/>
+    <input name="description" value="description"/>
+    <button type="submit">update</button>
+</form>
+<form method="put" action="/task/1/stage">
+    <select name="stage_id">
+        <option value="2">in progress</option>
+    </select>
+    <button type="submit">move</button>
+</form>
+<div
+        data-id="1"
+        data-subject="subject"
+        data-description="description"
+        >
+    <a id="current_stage" href="/stage/1">1</a>
+</div>
+
+<!--GET /stage/1-->
+<form method="put" action="/stage/1">
+    <input name="name"/>
+    <button type="submit">update</button>
+</form>
+<form method="put" action="/stage/1/decrease">
+    <button type="submit">position decrease</button>
+</form>
+<form method="put" action="/stage/1/increase">
+    <button type="submit">position increase</button>
+</form>
+<ul>
+    <li>
+        <a href="/task/1">1</a>
+    </li>
+    <li>
+        <a href="/task/2">2</a>
+    </li>
+</ul>
