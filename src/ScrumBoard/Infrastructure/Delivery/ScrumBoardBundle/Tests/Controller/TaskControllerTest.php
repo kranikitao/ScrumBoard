@@ -82,6 +82,24 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
+     * @test
+     */
+    public function post_createNewTask_createsTaskAndReturns()
+    {
+        $subject = 'Task subject';
+        $description = 'Task description';
+        $this->requestToCreateTask($subject, $description);
+
+        $crawler = $this->client->request('GET', $this->client->getResponse()->headers->get('Location'));
+
+        $itemNode = $crawler->filter('div');
+        $this->assertEquals(1, $itemNode->count());
+        $this->assertEquals($subject, $itemNode->attr('data-subject'));
+        $this->assertEquals($description, $itemNode->attr('data-description'));
+        $this->assertNotEmpty($itemNode->attr('data-id'));
+    }
+
+    /**
      * @param $subject
      * @param $description
      */
@@ -89,5 +107,4 @@ class TaskControllerTest extends WebTestCase
     {
         $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
     }
-
 }
