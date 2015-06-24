@@ -27,7 +27,7 @@ class TaskController extends Controller
     {
         $task = $this->getTaskRepository()->findById($id);
 
-        return new Response($this->renderView('ScrumBoardBundle:Task:get.html.twig', ['task' => $task]), 201);
+        return new Response($this->renderView('ScrumBoardBundle:Task:get.html.twig', ['task' => $task]), 200);
     }
 
     /**

@@ -29,7 +29,7 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function get_requestToTask_ShouldReturn200OkAndNoTasks()
+    public function getTask_NoTasks_Returns200OkAndEmptyItemList()
     {
         $crawler = $this->client->request('GET', '/task/');
 
@@ -40,7 +40,7 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function post_createNewTask_ShouldReturn201Created()
+    public function postTask_GivenValidRequest_Returns201()
     {
         $subject = 'Task subject';
         $description = 'Task description';
@@ -52,15 +52,28 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function post_createNewTask_createsTaskAndReturnsItsLocation()
+    public function postTask_GivenValidRequest_ResponseWithLocation()
     {
         $subject = 'Task subject';
         $description = 'Task description';
-        $this->requestToCreateTask($subject, $description);
+        $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
 
-        $crawler = $this->client->request('GET', $this->client->getResponse()->headers->get('Location'));
+        $this->assertEquals('/task/1', $this->client->getResponse()->headers->get('Location'));
+    }
+
+    /**
+     * @test
+     */
+    public function getTask_GivenTask_ReturnsTaskWithCorrectValues()
+    {
+        $subject = 'Task subject';
+        $description = 'Task description';
+        $location = $this->givenTaskAndReturnLocation($subject, $description);
+
+        $crawler = $this->client->request('GET', $location);
 
         $itemNode = $crawler->filter('div');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(1, $itemNode->count());
         $this->assertEquals($subject, $itemNode->attr('data-subject'));
         $this->assertEquals($description, $itemNode->attr('data-description'));
@@ -70,41 +83,25 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function get_createTasksAndRequestToTask_ReturnsTaskList()
+    public function getTask_GivenTwoTasks_ReturnsTwoItems()
     {
-        $this->requestToCreateTask('task 1');
-        $this->requestToCreateTask('task 2');
+        $this->givenTaskAndReturnLocation('task 1');
+        $this->givenTaskAndReturnLocation('task 2');
         $crawler = $this->client->request('GET', '/task/');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(2, $crawler->filter('ul>li')->count());
-
     }
 
     /**
-     * @test
+     * @param string $subject
+     * @param string $description
+     * @return array|string
      */
-    public function post_createNewTask_createsTaskAndReturns()
-    {
-        $subject = 'Task subject';
-        $description = 'Task description';
-        $this->requestToCreateTask($subject, $description);
-
-        $crawler = $this->client->request('GET', $this->client->getResponse()->headers->get('Location'));
-
-        $itemNode = $crawler->filter('div');
-        $this->assertEquals(1, $itemNode->count());
-        $this->assertEquals($subject, $itemNode->attr('data-subject'));
-        $this->assertEquals($description, $itemNode->attr('data-description'));
-        $this->assertNotEmpty($itemNode->attr('data-id'));
-    }
-
-    /**
-     * @param $subject
-     * @param $description
-     */
-    private function requestToCreateTask($subject = 'Task subject', $description = 'Task description')
+    private function givenTaskAndReturnLocation($subject = 'Task subject', $description = 'Task description')
     {
         $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
+
+        return $this->client->getResponse()->headers->get('Location');
     }
 }
