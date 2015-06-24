@@ -40,25 +40,14 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function postTask_GivenValidRequest_Returns201()
+    public function getTask_GivenTwoTasks_ReturnsTwoItems()
     {
-        $subject = 'Task subject';
-        $description = 'Task description';
-        $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
+        $this->givenTaskAndReturnLocation('task 1');
+        $this->givenTaskAndReturnLocation('task 2');
+        $crawler = $this->client->request('GET', '/task/');
 
-        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function postTask_GivenValidRequest_ResponseWithLocation()
-    {
-        $subject = 'Task subject';
-        $description = 'Task description';
-        $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
-
-        $this->assertEquals('/task/1', $this->client->getResponse()->headers->get('Location'));
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(2, $crawler->filter('ul>li')->count());
     }
 
     /**
@@ -83,15 +72,28 @@ class TaskControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function getTask_GivenTwoTasks_ReturnsTwoItems()
+    public function postTask_GivenValidRequest_Returns201()
     {
-        $this->givenTaskAndReturnLocation('task 1');
-        $this->givenTaskAndReturnLocation('task 2');
-        $crawler = $this->client->request('GET', '/task/');
+        $subject = 'Task subject';
+        $description = 'Task description';
+        $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertEquals(2, $crawler->filter('ul>li')->count());
+        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
     }
+
+    /**
+     * @test
+     */
+    public function postTask_GivenValidRequest_ResponseWithLocation()
+    {
+        $subject = 'Task subject';
+        $description = 'Task description';
+        $this->client->request('POST', '/task/', ['subject' => $subject, 'description' => $description]);
+
+        $this->assertEquals('/task/1', $this->client->getResponse()->headers->get('Location'));
+    }
+//
+//    public function putTask_GivenValidRequest_...
 
     /**
      * @param string $subject
